@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Menu | Barra Revela e Volta ao Normal</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #2c2e31;  /* fundo cinza escuro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+    padding: 2rem;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+}
+
+.menu-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* ESTILO BASE DO LINK - CONTORNO BRANCO (estado normal) */
+.menu a {
+    font-size: clamp(2rem, 6vw, 3rem);
+    text-decoration: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: transparent;
+    -webkit-text-stroke: 2px #ffffff;
+    text-stroke: 2px #ffffff;
+    position: relative;
+    display: inline-block;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* TEXTO PREENCHIDO - COR #00ade1 SEM BORDAS (aparece quando a barra passa) */
+.menu a::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #00ade1;
+    -webkit-text-stroke: 0px;
+    text-stroke: 0px;
+    width: 0%;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: width 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    pointer-events: none;
+}
+
+/* BARRA QUE DESLIZA */
+.menu a::after {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 10%;
+    height: 80%;
+    width: 5px;
+    background-color: #00ade1;
+    border-radius: 3px;
+    transition: left 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(0, 173, 225, 0.6);
+    opacity: 1;
+}
+
+/* EFEITO HOVER - A BARRA PERCORRE E PREENCHE A PALAVRA */
+.menu a:hover::before {
+    width: 100%;
+}
+
+.menu a:hover::after {
+    left: calc(100% + 8px);
+}
+
+/* Quando o mouse sai (hover termina), tudo volta ao normal automaticamente */
+/* As transições de volta são suaves graças ao transition nos elementos */
+
+/* Pequeno atraso na volta do contorno branco para sincronizar com a barra */
+.menu a {
+    transition: transform 0.2s, -webkit-text-stroke 0.3s ease 0.1s, text-stroke 0.3s ease 0.1s;
+}
+
+/* Efeito sutil no hover do link */
+.menu a:hover {
+    transform: scale(1.02);
+}
+
+/* Feedback visual da barra */
+.menu a:hover::after {
+    box-shadow: 0 0 15px rgba(0, 173, 225, 0.9);
+}
+
+/* Efeito ao clicar (active) */
+.menu a:active {
+    transform: scale(0.98);
+}
+
+.menu a:active::before {
+    width: 100%;
+}
+
+.menu a:active::after {
+    left: calc(100% + 8px);
+    transition: left 0.3s ease;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .menu {
+        gap: 1.5rem;
+    }
+    .menu a::after {
+        left: -16px;
+        width: 4px;
+        top: 8%;
+        height: 84%;
+    }
+    .menu a:hover::after {
+        left: calc(100% + 6px);
+    }
+    .menu a:active::after {
+        left: calc(100% + 6px);
+    }
+}
+
+@media (max-width: 550px) {
+    .menu {
+        gap: 1.2rem;
+    }
+    .menu a {
+        -webkit-text-stroke: 1.5px #ffffff;
+        font-size: 1.6rem;
+    }
+    .menu a::after {
+        left: -14px;
+        width: 3px;
+        top: 6%;
+        height: 88%;
+    }
+    .menu a:hover::after {
+        left: calc(100% + 5px);
+    }
+    .menu a:active::after {
+        left: calc(100% + 5px);
+    }
+}
+
+@media (max-width: 420px) {
+    .menu a::after {
+        left: -12px;
+        width: 3px;
+    }
+    .menu a:hover::after {
+        left: calc(100% + 4px);
+    }
+    .menu a:active::after {
+        left: calc(100% + 4px);
+    }
+}
+
+/* ACESSIBILIDADE */
+.menu a:focus-visible {
+    outline: 3px solid #00ade1;
+    outline-offset: 8px;
+    border-radius: 4px;
+}
+
+.menu a:focus-visible::before {
+    width: 100%;
+}
+
+.menu a:focus-visible::after {
+    left: calc(100% + 8px);
+}
+
+/* Fallback para navegadores antigos */
+@supports not ( (-webkit-text-stroke: 2px white) or (text-stroke: 2px white) ) {
+    .menu a {
+        color: #ffffff;
+    }
+    .menu a:hover {
+        color: #00ade1;
+    }
+    .menu a::before {
+        color: #00ade1;
+    }
+}
+
+/* Transições suaves - garantindo que a volta também seja suave */
+.menu a::before,
+.menu a::after {
+    transition: width 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), left 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+/* Quando o mouse sai, o contorno branco volta suavemente */
+.menu a {
+    transition: transform 0.2s, -webkit-text-stroke 0.4s ease, text-stroke 0.4s ease;
+}
+</style>
+</head>
+<body>
+
+<div class="menu">
+    <div class="menu-item">
+        <a href="#" data-text="HOME">HOME</a>
+    </div>
+    <div class="menu-item">
+        <a href="#" data-text="ABOUT">ABOUT</a>
+    </div>
+    <div class="menu-item">
+        <a href="#" data-text="SERVICES">SERVICES</a>
+    </div>
+    <div class="menu-item">
+        <a href="#" data-text="TEAM">TEAM</a>
+    </div>
+    <div class="menu-item">
+        <a href="#" data-text="CONTRACT">CONTRACT</a>
+    </div>
+</div>
+
+</body>
+</html>
